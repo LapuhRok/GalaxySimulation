@@ -1,27 +1,54 @@
 /*
  * File: bounce.c
  * --------------
- * Contains a sample of how to use the graphics routines.
- *
- * CME212 Assignment 5
- * Oliver Fringer
- * Stanford University
+ * An example code to demonstrate graphics routines
  *
  */
 
 #include "rand.h"
 #include "graphics.h"
-#include "math.h"
+#include <GLUT/glut.h>
+// For Linux, you may need GL/glut.h instead:
+//#include <GL/glut.h>
+#include <math.h>
 
-void Bounce(double *x, double *y, double *u, double *v, double L, double W);
+void Bounce(double *x, double *y, double *u, double *v);
 
-const double circleRadius=0.025, circleColor=0;
-const int windowWidth=800;
+double *x,*y,*mass,*forceX,*forceY,*u,*v;
+float dt=1e-3,grav=10;
 
-int main(int argc, char *argv[]) {
-  int i, N=10;
-  float L=1,W=1,dt=1e-3,grav=10;
-  double *x,*y,*mass,*forceX,*forceY,*u,*v,ax,ay;
+int N = 10;
+
+// This function is called every time GLUT refreshes the display.
+void display(void)
+{
+    int i;
+    double ax, ay;
+    for(i=0;i<N;i++) {
+      ax=forceX[i]/mass[i];
+      ay=forceY[i]/mass[i]-grav;
+
+      u[i]+=ax*dt;
+      v[i]+=ay*dt;
+      x[i]+=u[i]*dt;
+      y[i]+=v[i]*dt;
+
+      Bounce(&x[i],&y[i],&u[i],&v[i]);
+    }
+    
+    drawPoints(x,y,N);
+       	    	
+}
+
+
+
+int main(int argc, char *argv[]) {    
+   
+  // Initialize the graphics routines
+  graphicsInit(&argc, argv, display);
+    
+
+  int i;
 
   x = (double *)malloc(N*sizeof(double));
   y = (double *)malloc(N*sizeof(double));
@@ -33,56 +60,31 @@ int main(int argc, char *argv[]) {
 
 
   for(i=0;i<N;i++) {
-    x[i]=frand(0,1);
-    y[i]=frand(.25,.75);
+    x[i]=frand(-1,1);
+    y[i]=frand(-.75,.75);
     u[i]=frand(-1,1);
     v[i]=frand(-1,1);
     mass[i]=1;
     forceX[i]=0;
     forceY[i]=0;
   }
-  InitializeGraphics(argv[0],windowWidth,windowWidth);
-  SetCAxes(0,1);
-
-  printf("Hit q to quit.\n");
-  while(!CheckForQuit()) {
-    for(i=0;i<N;i++) {
-      ax=forceX[i]/mass[i];
-      ay=forceY[i]/mass[i]-grav;
-
-      u[i]+=ax*dt;
-      v[i]+=ay*dt;
-      x[i]+=u[i]*dt;
-      y[i]+=v[i]*dt;
-
-      Bounce(&x[i],&y[i],&u[i],&v[i],L,W);
-    }
-
-    ClearScreen();  
-    for(i=0;i<N;i++)
-      DrawCircle(x[i],y[i],L,W,circleRadius,circleColor);
-    Refresh();
-
-    // Sleep a short while to avoid screen flickering
-    usleep(3000);
-  }
-  FlushDisplay();
-  CloseDisplay();
+  
+  glutMainLoop();
+	
   return 0;
 }
 
 /*
  * Function: Bounce
- * Usage: Bounce(&x[i],&y[i],&u[i],&v[i],L,W);
+ * Usage: Bounce(&x[i],&y[i],&u[i],&v[i]);
  * -------------------------------------------
- * If a particle moves beyond any of the boundaries then set
- * it on the other side of the boundary back in the domain and
- * reverse the velocities.
+ * If a particle moves beyond any of the boundaries then bounce it back
  *
  */
-void Bounce(double *x, double *y, double *u, double *v, double L, double W) {
-  if(*x>L) {
-    *x=2*L-*x;
+void Bounce(double *x, double *y, double *u, double *v) {
+  double W = 1.0f, H = 1.0f;
+  if(*x>W) {
+    *x=2*W-*x;
     *u=-*u;
   }
 
@@ -91,8 +93,8 @@ void Bounce(double *x, double *y, double *u, double *v, double L, double W) {
     *u=-*u;
   }
 
-  if(*y>W) {
-    *y=2*W-*y;
+  if(*y>H) {
+    *y=2*H-*y;
     *v=-*v;
   }
 
@@ -101,7 +103,6 @@ void Bounce(double *x, double *y, double *u, double *v, double L, double W) {
     *v=-*v;
   }
 }
-
 
 
   

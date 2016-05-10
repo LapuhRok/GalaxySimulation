@@ -1,18 +1,27 @@
 ##
-# Makefile for bounce, galaxy simulation
+# Makefile for bounce
 
-CFLAGS=-g
-INCLUDES=-I/opt/X11/include
-LDFLAGS=-L/opt/X11/lib -lX11 -lm
+
+
+# The following flags work for OSX.
+#  For linux, you must instead link to the GLUT and OpenGL libraries
+LDFLAGS=-framework GLUT -framework OpenGL
+#LDFLAGS=-lm -lglut -lGL
+
+# Suppresses warnings about the deprecated GLUT routines.
+CFLAGS=-Wno-deprecated
+
+
+all: bounce
 
 bounce: bounce.o graphics.o
 	gcc -o bounce bounce.o graphics.o $(LDFLAGS)
 
-bounce.o: bounce.c graphics.o rand.h
-	gcc -c bounce.c $(INCLUDES)
-
+bounce.o: bounce.c
+	gcc -c bounce.c $(CFLAGS)
+	
 graphics.o: graphics.c
-	gcc -c graphics.c $(INCLUDES)
-
+	gcc -c graphics.c $(CFLAGS)	
+	
 clean:
-	rm -f ./bounce *.o 
+	rm -f ./bounce *.o
