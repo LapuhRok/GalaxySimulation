@@ -76,12 +76,22 @@ void display(void)
     // Write to file
     iter++;
     if (iter == nsteps) {
-        printf("Done!\n");
         endTime = get_wall_seconds();
         totalRunTime =  endTime - startRunTime;
         totalCodeTime +=  endTime - startCodeTime;
         printf("Total running time: %f\n", totalRunTime);
         printf("Running time: %f\n", totalCodeTime);
+        
+        // Put everything together
+        for (int i = 0; i < N; i++) {
+            p[5*i + 0] = mass[i];
+            p[5*i + 1] = x[i];
+            p[5*i + 2] = y[i];
+            p[5*i + 3] = u[i];
+            p[5*i + 4] = v[i];
+        }
+        write_doubles_to_file(5*N, p, "results.gal");
+        printf("Done!\n");
     }
     
     totalCodeTime +=  get_wall_seconds() - startCodeTime;
