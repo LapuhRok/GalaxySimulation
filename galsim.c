@@ -78,13 +78,13 @@ void display(void)
     if (iter == nsteps) {
         printf("Done!\n");
         endTime = get_wall_seconds();
-        totalRunTime = startRunTime - endTime;
-        totalCodeTime += startCodeTime - endTime;
+        totalRunTime =  endTime - startRunTime;
+        totalCodeTime +=  endTime - startCodeTime;
         printf("Total running time: %f\n", totalRunTime);
         printf("Running time: %f\n", totalCodeTime);
     }
     
-    totalCodeTime += startCodeTime - get_wall_seconds();
+    totalCodeTime +=  get_wall_seconds() - startCodeTime;
     
     // Display
     if (iter % 100 == 0) {
