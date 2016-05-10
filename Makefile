@@ -9,7 +9,7 @@ LDFLAGS=-framework GLUT -framework OpenGL
 #LDFLAGS=-lm -lglut -lGL
 
 # Suppresses warnings about the deprecated GLUT routines.
-CFLAGS=-Wno-deprecated
+CFLAGS=-Wno-deprecated-declarations
 
 
 all: bounce
