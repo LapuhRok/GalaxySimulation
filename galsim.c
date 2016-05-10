@@ -2,11 +2,11 @@
 // High Perfomrance Computing - Assignment
 // Rok Lapuh
 
-#include "rand.h"
 #include "graphics.h"
 #include "file_operations.c"
 #include <GLUT/glut.h>
 #include <math.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
