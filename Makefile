@@ -1,10 +1,9 @@
 ##
-# Makefile for bounce
-
-
+# Makefile for galsim
 
 # The following flags work for OSX.
-#  For linux, you must instead link to the GLUT and OpenGL libraries
+# For linux, you must instead link to the GLUT and OpenGL libraries
+
 LDFLAGS=-framework GLUT -framework OpenGL
 #LDFLAGS=-lm -lglut -lGL
 
@@ -12,16 +11,16 @@ LDFLAGS=-framework GLUT -framework OpenGL
 CFLAGS=-Wno-deprecated-declarations
 
 
-all: bounce
+all: galsim
 
-bounce: bounce.o graphics.o
-	gcc -o bounce bounce.o graphics.o $(LDFLAGS)
+galsim: galsim.o graphics.o
+	gcc -o galsim galsim.o graphics.o $(LDFLAGS)
 
-bounce.o: bounce.c
-	gcc -c bounce.c $(CFLAGS)
+galsim.o: galsim.c
+	gcc -c galsim.c $(CFLAGS)
 	
 graphics.o: graphics.c
 	gcc -c graphics.c $(CFLAGS)	
 	
 clean:
-	rm -f ./bounce *.o
+	rm -f ./galsim *.o
