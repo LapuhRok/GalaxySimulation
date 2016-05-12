@@ -23,6 +23,8 @@ int main(int argc, char *argv[]) {
     rootNode = (treeNode*)malloc(sizeof(treeNode));
     createTree();
     print_tree(rootNode, 0);
+    getCenterOfMass(rootNode);
+    print_tree(rootNode, 0);
     free_tree(rootNode);
     
     return 0;
@@ -181,6 +183,44 @@ void print_tree(treeNode* node, int level) {
     }
     if(node->SE){
         print_tree(node->SE, level+1);
+    }
+}
+
+void getCenterOfMass(treeNode* node)
+{
+    if (!node->NE) {
+        if (node -> numberOfParticles == 0) {
+            node -> nodeMass = 0;
+            node -> centerX = 0;
+            node -> centerY = 0;
+        } else {
+            node -> nodeMass = mass[node->id];
+            node -> centerX = x[node->id];
+            node -> centerY = y[node->id];
+        }
+    } else {
+        getCenterOfMass(node -> NW);
+        getCenterOfMass(node -> NE);
+        getCenterOfMass(node -> SW);
+        getCenterOfMass(node -> SE);
+        
+        node -> nodeMass =  node->NW->nodeMass +
+                            node->NE->nodeMass +
+                            node->SW->nodeMass +
+                            node->SE->nodeMass;
+        
+        node -> centerX =   node->NW->nodeMass * node->NW->centerX +
+                            node->NE->nodeMass * node->NE->centerX +
+                            node->SW->nodeMass * node->SW->centerX +
+                            node->SE->nodeMass * node->SE->centerX;
+        node -> centerX = node->centerX / node->nodeMass;
+        
+        
+        node -> centerY =   node->NW->nodeMass * node->NW->centerY +
+                            node->NE->nodeMass * node->NE->centerY +
+                            node->SW->nodeMass * node->SW->centerY +
+                            node->SE->nodeMass * node->SE->centerY;
+        node -> centerY = node->centerY / node->nodeMass;
     }
 }
 
