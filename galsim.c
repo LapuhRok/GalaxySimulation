@@ -4,6 +4,7 @@
 
 #include "graphics.h"
 #include "file_operations.c"
+#include "quadTree.c"
 #include <GLUT/glut.h>
 #include <math.h>
 #include <stdlib.h>
@@ -14,11 +15,16 @@
 // For Linux, you may need GL/glut.h instead:
 //#include <GL/glut.h>
 
+// Force Struct
+struct force {
+    double Xforce;
+    double Yforce;
+};
+
 // Declarations of functions
 void Bounce(double *x, double *y, double *u, double *v);
 void updateForce();
-void createTree();
-void insertInTree(int i, treeNode* node);
+struct force forceOnParticle(int i, treeNode* node);
 
 // Constant parameters
 int N;
@@ -34,6 +40,7 @@ int iter = 0;
 // Data
 double *p;
 double *x,*y,*mass,*forceX,*forceY,*u,*v;
+treeNode* rootNode;
 
 // Timers
 double totalRunTime = 0;    // time of running the program
@@ -49,24 +56,6 @@ static double get_wall_seconds() {
     double seconds = tv.tv_sec + (double)tv.tv_usec / 1000000;
     return seconds;
 }
-
-// Tree structure
-struct treeNode_ {
-    double centerX;
-    double centerY;
-    double nodeMass;
-    int numberOfParticles;
-    double leftBorder;
-    double rightBorder;
-    double upBorder;
-    double downBorder;
-    struct treeNode_* NW;
-    struct treeNode_* NE;
-    struct treeNode_* SW;
-    struct treeNode_* SE;
-
-};
-typedef struct treeNode_ treeNode;
 
 // This function is called every time GLUT refreshes the display.
 void display(void)
@@ -122,8 +111,6 @@ void display(void)
     
 }
 
-
-
 int main(int argc, char *argv[]) {
     
     startRunTime = get_wall_seconds();
@@ -140,11 +127,12 @@ int main(int argc, char *argv[]) {
     sscanf(argv[4],"%lf",&delta_t);
     sscanf(argv[5],"%lf",&theta_max);
     
+    
     // Calculate gravitational constant
     G = 100/N;
     
     // Initialize the graphics routines
-    graphicsInit(&argc, argv, display);
+//    graphicsInit(&argc, argv, display);
     
     // Allocate memory for variables
     p = (double *)malloc(5*N*sizeof(double));
@@ -172,8 +160,19 @@ int main(int argc, char *argv[]) {
         v[i] = p[5*i + 4];
     }
     
+    for (int i = 0; i<N; i++) {
+        printf("i=%d x=%f y=%f\n",i,x[i],y[i]);
+    }
+    
+    rootNode = (treeNode*)malloc(sizeof(treeNode));
+    createTree();                                       // ERROR IN THIS LINE-----------
+    getCenterOfMass(rootNode);
+    print_tree(rootNode, 0);
+    updateForce();
+    free_tree(rootNode);
+    
     // Run
-    glutMainLoop();
+//    glutMainLoop();
     
     return 0;
 }
@@ -204,73 +203,67 @@ void Bounce(double *x, double *y, double *u, double *v)
 
 void updateForce()
 {
-//    double sumX;
-//    double sumY;
-//    double xi;
-//    double yi;
-//    double xj, yj, rx, ry, r, rr;
-//    for(int i = 0; i < N; i++) {
-//        sumX = 0;
-//        sumY = 0;
-//        xi = x[i];
-//        yi = y[i];
-//        for (int j = 0; j < N; j++) {
-//            if (i == j) continue;
-//            xj = x[j];
-//            yj = y[j];
-//            rx = xi - xj;
-//            ry = yi - yj;
-//            r = sqrt(rx*rx + ry*ry);
-//            rr = r + e0;
-//            sumX += mass[j]*rx/(rr*rr*rr);
-//            sumY += mass[j]*ry/(rr*rr*rr);
-//        }
-//        forceX[i] = -G*mass[i]*sumX;
-//        forceY[i] = -G*mass[i]*sumY;
-//    }
-}
-
-void createTree()
-{
-    if (rootNode) free_tree(rootNode);
+    if (rootNode)free_tree(rootNode);
+    rootNode = (treeNode*)malloc(sizeof(treeNode));
+    createTree();
+    getCenterOfMass(rootNode);
     
-    treeNode* rootNode = (treeNode*)malloc(sizeof(treeNode));
-    rootNode -> numberOfParticles = 0;
-    rootNode -> downBorder = 0.0;
-    rootNode -> upBorder = 1.0;
-    rootNode -> leftBorder = 0.0;
-    rootNode -> rightBorder = 1.0;
-    
-    for (int i = 0; i < N; i++) {
-        insertInTree(i, rootNode);
+    for(int i = 0; i < N; i++) {
+        struct force F = forceOnParticle(i, rootNode);
+        forceX[i] = F.Xforce;
+        forceY[i] = F.Yforce;
     }
-    
-    
 }
 
-void insertInTree(int i, treeNode* node)
+struct force forceOnParticle(int i, treeNode* node)
 {
-    node -> numberOfParticles++;
-    if (node -> numberOfParticles == 1) {
-        node -> centerX = x[i];
-        node -> centerY = y[i];
-        node -> nodeMass = mass[i];
+    struct force F;
+    double rx, ry, r, rr;
+    if (node -> id == i) {
+        F.Xforce = 0;
+        F.Yforce = 0;
+        return F;
+    } else if (!node->NE) {
+        if (node -> numberOfParticles == 0) {
+            F.Xforce = 0;
+            F.Yforce = 0;
+            return F;
+        } else {
+            int j = node->id;
+            rx = x[i] - x[j];
+            ry = y[i] - y[j];
+            r = sqrt(rx*rx + ry*ry);
+            rr = r + e0;
+            F.Xforce = -G*mass[i]*mass[j]*rx/(rr*rr*rr);
+            F.Yforce = -G*mass[i]*mass[j]*ry/(rr*rr*rr);
+            return F;
+        }
     }
     else {
-        printf("ELSE!");
+        double W = node->rightBorder - node->leftBorder;
+        double D = sqrt((node->centerX - x[i])*(node->centerX - x[i]) +
+                        (node->centerY - y[i])*(node->centerY - y[i]));
+        double T = W/D;
+        
+        if (T < theta_max) {
+            rx = x[i] - node->centerX;
+            ry = y[i] - node->centerY;
+            r = sqrt(rx*rx + ry*ry);
+            rr = r + e0;
+            F.Xforce = -G*mass[i]*node->nodeMass*rx/(rr*rr*rr);
+            F.Yforce = -G*mass[i]*node->nodeMass*ry/(rr*rr*rr);
+            return F;
+        } else {
+            struct force FNW = forceOnParticle(i, node->NW);
+            struct force FSW = forceOnParticle(i, node->SW);
+            struct force FNE = forceOnParticle(i, node->NE);
+            struct force FSE = forceOnParticle(i, node->SE);
+            
+            F.Xforce = FNW.Xforce + FSW.Xforce + FNE.Xforce + FSE.Xforce;
+            F.Yforce = FNW.Yforce + FSW.Yforce + FNE.Yforce + FSE.Yforce;
+            return F;
+        }
     }
-}
-
-void free_tree(treeNode* rootNode) {
-    if(rootNode->NW)
-        free_tree(rootNode->NW);
-    if(rootNode->NE)
-        free_tree(rootNode->NE);
-    if(rootNode->SW)
-        free_tree(rootNode->SW);
-    if(rootNode->SE)
-        free_tree(rootNode->SE);
-    free(rootNode);
 }
 
 

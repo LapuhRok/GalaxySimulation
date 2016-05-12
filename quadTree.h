@@ -1,5 +1,5 @@
-#ifndef testTree_h
-#define testTree_h
+#ifndef quadTree_h
+#define quadTree_h
 
 #include <GLUT/glut.h>
 #include <math.h>

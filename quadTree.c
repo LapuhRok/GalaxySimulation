@@ -1,34 +1,33 @@
-#include "testTree.h"
+#include "quadTree.h"
 
 
-int main(int argc, char *argv[]) {
-    
-    N = 3;
-    
-    // Allocate memory for variables
-    x = (double *)malloc(N*sizeof(double));
-    y = (double *)malloc(N*sizeof(double));
-    mass = (double *)malloc(N*sizeof(double));
-    
-    x[0] = 0.75;
-    y[0] = 0.75;
-    mass[0] = 1.0;
-    x[1] = 0.25;
-    y[1] = 0.25;
-    mass[1] = 1.0;
-    x[2] = 0.3;
-    y[2] = 0.3;
-    mass[2] = 2.0;
-    
-    rootNode = (treeNode*)malloc(sizeof(treeNode));
-    createTree();
-    print_tree(rootNode, 0);
-    getCenterOfMass(rootNode);
-    print_tree(rootNode, 0);
-    free_tree(rootNode);
-    
-    return 0;
-}
+//int main(int argc, char *argv[]) {
+//    
+//    N = 3;
+//    
+//    // Allocate memory for variables
+//    x = (double *)malloc(N*sizeof(double));
+//    y = (double *)malloc(N*sizeof(double));
+//    mass = (double *)malloc(N*sizeof(double));
+//    
+//    x[0] = 0.75;
+//    y[0] = 0.75;
+//    mass[0] = 1.0;
+//    x[1] = 0.25;
+//    y[1] = 0.25;
+//    mass[1] = 1.0;
+//    x[2] = 0.3;
+//    y[2] = 0.3;
+//    mass[2] = 2.0;
+//    
+//    rootNode = (treeNode*)malloc(sizeof(treeNode));
+//    createTree();
+//    getCenterOfMass(rootNode);
+//    print_tree(rootNode, 0);
+//    free_tree(rootNode);
+//    
+//    return 0;
+//}
 
 void createTree()
 {
@@ -41,6 +40,7 @@ void createTree()
     rootNode -> NE = NULL;
     rootNode -> SW = NULL;
     rootNode -> SE = NULL;
+    rootNode -> id = -1;
     
     for (int i = 0; i < N; i++) {
         insertInTree(i, rootNode);
@@ -53,6 +53,7 @@ void insertInTree(int i, treeNode* node)
     
     // create children if they do not exist
     if (!node -> SW) {
+        node -> id = -1; // set id of nodes without children to -1
         double midX = (node->leftBorder + node->rightBorder)/2;
         double midY = (node->downBorder + node->upBorder)/2;
         // NW
@@ -66,6 +67,7 @@ void insertInTree(int i, treeNode* node)
         node -> NW -> NE = NULL;
         node -> NW -> SW = NULL;
         node -> NW -> SE = NULL;
+        node -> NW -> id = -1;
         // SW
         node -> SW = (treeNode*)malloc(sizeof(treeNode));
         node -> SW -> numberOfParticles = 0;
@@ -77,6 +79,7 @@ void insertInTree(int i, treeNode* node)
         node -> SW -> NE = NULL;
         node -> SW -> SW = NULL;
         node -> SW -> SE = NULL;
+        node -> SW -> id = -1;
         // NE
         node -> NE = (treeNode*)malloc(sizeof(treeNode));
         node -> NE -> numberOfParticles = 0;
@@ -88,6 +91,7 @@ void insertInTree(int i, treeNode* node)
         node -> NE -> NE = NULL;
         node -> NE -> SW = NULL;
         node -> NE -> SE = NULL;
+        node -> NE -> id = -1;
         // SE
         node -> SE = (treeNode*)malloc(sizeof(treeNode));
         node -> SE-> numberOfParticles = 0;
@@ -99,6 +103,7 @@ void insertInTree(int i, treeNode* node)
         node -> SE -> NE = NULL;
         node -> SE -> SW = NULL;
         node -> SE -> SE = NULL;
+        node -> SE -> id = -1;
     }
     
     // Particle on the WEST
