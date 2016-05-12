@@ -4,3 +4,11 @@
 *.o
 
 galsim
+
+tree_example.c
+
+tree_example
+
+testTree
+
+*.plist
