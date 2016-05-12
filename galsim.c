@@ -16,7 +16,7 @@
 
 // Declarations of functions
 void Bounce(double *x, double *y, double *u, double *v);
-void updateForce(int i);
+void updateForce();
 
 // Constant parameters
 int N;
@@ -53,9 +53,7 @@ void display(void)
     startCodeTime = get_wall_seconds();
     
     // Update force
-    for(int i = 0; i < N; i++) {
-        updateForce(i);
-    }
+    updateForce();
     
     // Update positions
     double ax, ay;
@@ -183,26 +181,32 @@ void Bounce(double *x, double *y, double *u, double *v)
     }
 }
 
-void updateForce(int i)
+void updateForce()
 {
-    double sumX = 0;
-    double sumY = 0;
-    double xi = x[i];
-    double yi = y[i];
+    double sumX;
+    double sumY;
+    double xi;
+    double yi;
     double xj, yj, rx, ry, r, rr;
-    for (int j = 0; j < N; j++) {
-        if (i == j) continue;
-        xj = x[j];
-        yj = y[j];
-        rx = xi - xj;
-        ry = yi - yj;
-        r = sqrt(rx*rx + ry*ry);
-        rr = r + e0;
-        sumX += mass[j]*rx/(rr*rr*rr);
-        sumY += mass[j]*ry/(rr*rr*rr);
+    for(int i = 0; i < N; i++) {
+        sumX = 0;
+        sumY = 0;
+        xi = x[i];
+        yi = y[i];
+        for (int j = 0; j < N; j++) {
+            if (i == j) continue;
+            xj = x[j];
+            yj = y[j];
+            rx = xi - xj;
+            ry = yi - yj;
+            r = sqrt(rx*rx + ry*ry);
+            rr = r + e0;
+            sumX += mass[j]*rx/(rr*rr*rr);
+            sumY += mass[j]*ry/(rr*rr*rr);
+        }
+        forceX[i] = -G*mass[i]*sumX;
+        forceY[i] = -G*mass[i]*sumY;
     }
-    forceX[i] = -G*mass[i]*sumX;
-    forceY[i] = -G*mass[i]*sumY;
 }
 
 
