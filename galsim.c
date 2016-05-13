@@ -78,7 +78,7 @@ void display(void)
         y[i] += v[i]*delta_t;
         
         // Uncomment to force points to stay in bounds
-        // Bounce(&x[i],&y[i],&u[i],&v[i]);
+        Bounce(&x[i],&y[i],&u[i],&v[i]);
     }
     
     // Write to file
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
     G = 100/N;
     
     // Initialize the graphics routines
-//    graphicsInit(&argc, argv, display);
+    graphicsInit(&argc, argv, display);
     
     // Allocate memory for variables
     p = (double *)malloc(5*N*sizeof(double));
@@ -160,19 +160,19 @@ int main(int argc, char *argv[]) {
         v[i] = p[5*i + 4];
     }
     
-    for (int i = 0; i<N; i++) {
-        printf("i=%d x=%f y=%f\n",i,x[i],y[i]);
-    }
-    
-    rootNode = (treeNode*)malloc(sizeof(treeNode));
-    createTree();                                       // ERROR IN THIS LINE-----------
-    getCenterOfMass(rootNode);
-    print_tree(rootNode, 0);
-    updateForce();
-    free_tree(rootNode);
+//    for (int i = 0; i<N; i++) {
+//        printf("i=%d x=%f y=%f\n",i,x[i],y[i]);
+//    }
+//    
+//    rootNode = (treeNode*)malloc(sizeof(treeNode));
+//    createTree();                                       // ERROR IN THIS LINE-----------
+//    getCenterOfMass(rootNode);
+//    print_tree(rootNode, 0);
+//    updateForce();
+//    free_tree(rootNode);
     
     // Run
-//    glutMainLoop();
+    glutMainLoop();
     
     return 0;
 }

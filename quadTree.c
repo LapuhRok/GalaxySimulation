@@ -3,22 +3,25 @@
 
 //int main(int argc, char *argv[]) {
 //    
-//    N = 3;
+//    N = 4;
 //    
 //    // Allocate memory for variables
 //    x = (double *)malloc(N*sizeof(double));
 //    y = (double *)malloc(N*sizeof(double));
 //    mass = (double *)malloc(N*sizeof(double));
 //    
-//    x[0] = 0.75;
-//    y[0] = 0.75;
+//    x[0] = 0.5;
+//    y[0] = 0.5;
 //    mass[0] = 1.0;
-//    x[1] = 0.25;
-//    y[1] = 0.25;
+//    x[1] = 0.5;
+//    y[1] = 0.8;
 //    mass[1] = 1.0;
-//    x[2] = 0.3;
-//    y[2] = 0.3;
+//    x[2] = 0.5;
+//    y[2] = 0.35;
 //    mass[2] = 2.0;
+//    x[3] = 0.5;
+//    y[3] = 0.575;
+//    mass[3] = 2.0;
 //    
 //    rootNode = (treeNode*)malloc(sizeof(treeNode));
 //    createTree();
@@ -115,8 +118,8 @@ void insertInTree(int i, treeNode* node)
                 node -> SW -> numberOfParticles++;
             } else if (node -> SW -> numberOfParticles == 1) {
                 node -> SW -> numberOfParticles++;
-                insertInTree(i, node->SW);
                 insertInTree(node->SW->id, node->SW);
+                insertInTree(i, node->SW);
             } else {
                 insertInTree(i, node->SW);
             }
@@ -127,8 +130,8 @@ void insertInTree(int i, treeNode* node)
                 node -> NW -> numberOfParticles++;
             } else if (node -> NW -> numberOfParticles == 1) {
                 node -> NW -> numberOfParticles++;
-                insertInTree(i, node->NW);
                 insertInTree(node->NW->id, node->NW);
+                insertInTree(i, node->NW);
             } else {
                 insertInTree(i, node->NW);
             }
@@ -143,8 +146,8 @@ void insertInTree(int i, treeNode* node)
                 node -> SE -> numberOfParticles++;
             } else if (node -> SE -> numberOfParticles == 1) {
                 node -> SE -> numberOfParticles++;
-                insertInTree(i, node->SE);
                 insertInTree(node->SE->id, node->SE);
+                insertInTree(i, node->SE);
             } else {
                 insertInTree(i, node->SE);
             }
@@ -156,8 +159,8 @@ void insertInTree(int i, treeNode* node)
                 node -> NE -> numberOfParticles++;
             } else if (node -> NE -> numberOfParticles == 1) {
                 node -> NE -> numberOfParticles++;
-                insertInTree(i, node->NE);
                 insertInTree(node->NE->id, node->NE);
+                insertInTree(i, node->NE);
             } else {
                 insertInTree(i, node->NE);
             }
