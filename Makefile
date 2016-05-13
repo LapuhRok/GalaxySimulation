@@ -9,8 +9,8 @@ LDFLAGS=-framework GLUT -framework OpenGL
 
 # Suppresses warnings about the deprecated GLUT routines.
 CFLAGS=-Wno-deprecated-declarations
-OPTFLAGS=
-DEBUGFLAGS=-g
+OPTFLAGS=-O0
+DEBUGFLAGS=
 
 
 all: galsim
