@@ -7,8 +7,13 @@
 LDFLAGS=-framework GLUT -framework OpenGL
 #LDFLAGS=-lm -lglut -lGL
 
+# Set Standard at C99 to enable for(int i= ...)
+STFLAGS=-std=c99
+
 # Suppresses warnings about the deprecated GLUT routines.
 CFLAGS=-Wno-deprecated-declarations
+
+# Set the optimisation and debug flags
 OPTFLAGS=-O0
 DEBUGFLAGS=
 
@@ -16,13 +21,13 @@ DEBUGFLAGS=
 all: galsim
 
 galsim: galsim.o graphics.o
-	gcc $(DEBUGFLAGS) -o galsim galsim.o graphics.o $(LDFLAGS)
+	gcc $(STFLAGS) $(DEBUGFLAGS) -o galsim galsim.o graphics.o $(LDFLAGS)
 
 galsim.o: galsim.c
-	gcc $(DEBUGFLAGS) $(OPTFLAGS) -c galsim.c $(CFLAGS)
+	gcc $(STFLAGS) $(DEBUGFLAGS) $(OPTFLAGS) -c galsim.c $(CFLAGS)
 	
 graphics.o: graphics.c
-	gcc $(DEBUGFLAGS) $(OPTFLAGS) -c graphics.c $(CFLAGS)	
+	gcc $(STFLAGS) $(DEBUGFLAGS) $(OPTFLAGS) -c graphics.c $(CFLAGS)	
 	
 clean:
 	rm -f ./galsim *.o
