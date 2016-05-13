@@ -52,6 +52,12 @@ void createTree()
 
 void insertInTree(int i, treeNode* node)
 {
+    // Filter out particles outside the box
+    if (x[i] < 0 || x[i] > 1 || y[i] < 0 || y[i] > 1) {
+        return;
+    }
+    
+    
     if (node == rootNode) rootNode -> numberOfParticles++;
     
     // create children if they do not exist

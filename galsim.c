@@ -78,7 +78,7 @@ void display(void)
         y[i] += v[i]*delta_t;
         
         // Uncomment to force points to stay in bounds
-        Bounce(&x[i],&y[i],&u[i],&v[i]);
+        // Bounce(&x[i],&y[i],&u[i],&v[i]);
     }
     
     // Write to file
