@@ -4,6 +4,7 @@
 
 #include "graphics.h"
 #include "file_operations.c"
+#include "quadTree.c"
 #include <GLUT/glut.h>
 #include <math.h>
 #include <stdlib.h>
@@ -14,9 +15,17 @@
 // For Linux, you may need GL/glut.h instead:
 //#include <GL/glut.h>
 
+// Force Struct
+struct force {
+    double Xforce;
+    double Yforce;
+};
+
 // Declarations of functions
 void Bounce(double *x, double *y, double *u, double *v);
 void updateForceBasic();
+void updateForceBarnesHut();
+struct force forceOnParticle(int i, treeNode* node);
 
 // Constant parameters
 int N;
@@ -32,6 +41,7 @@ int iter = 0;
 // Data
 double *p;
 double *x,*y,*mass,*forceX,*forceY,*u,*v;
+treeNode* rootNode;
 
 // Timers
 double totalRunTime = 0;    // time of running the program
@@ -40,6 +50,7 @@ double startRunTime;
 double startCodeTime;
 double endTime;
 
+// Timing function
 static double get_wall_seconds() {
     struct timeval tv;
     gettimeofday(&tv, NULL);
@@ -53,7 +64,7 @@ void display(void)
     startCodeTime = get_wall_seconds();
     
     // Update force
-    updateForceBasic();
+    updateForceBarnesHut();
     
     // Update positions
     double ax, ay;
@@ -101,8 +112,6 @@ void display(void)
     
 }
 
-
-
 int main(int argc, char *argv[]) {
     
     startRunTime = get_wall_seconds();
@@ -118,6 +127,7 @@ int main(int argc, char *argv[]) {
     sscanf(argv[3],"%d",&nsteps);
     sscanf(argv[4],"%lf",&delta_t);
     sscanf(argv[5],"%lf",&theta_max);
+    
     
     // Calculate gravitational constant
     G = 100/N;
@@ -150,6 +160,17 @@ int main(int argc, char *argv[]) {
         u[i] = p[5*i + 3];
         v[i] = p[5*i + 4];
     }
+    
+//    for (int i = 0; i<N; i++) {
+//        printf("i=%d x=%f y=%f\n",i,x[i],y[i]);
+//    }
+//    
+//    rootNode = (treeNode*)malloc(sizeof(treeNode));
+//    createTree();                                       // ERROR IN THIS LINE-----------
+//    getCenterOfMass(rootNode);
+//    print_tree(rootNode, 0);
+//    updateForce();
+//    free_tree(rootNode);
     
     // Run
     glutMainLoop();
@@ -209,6 +230,70 @@ void updateForceBasic()
     }
 }
 
+void updateForceBarnesHut()
+{
+    if (rootNode)free_tree(rootNode);
+    rootNode = (treeNode*)malloc(sizeof(treeNode));
+    createTree();
+    getCenterOfMass(rootNode);
+    
+    for(int i = 0; i < N; i++) {
+        struct force F = forceOnParticle(i, rootNode);
+        forceX[i] = F.Xforce;
+        forceY[i] = F.Yforce;
+    }
+}
+
+struct force forceOnParticle(int i, treeNode* node)
+{
+    struct force F;
+    double rx, ry, r, rr;
+    if (node -> id == i) {
+        F.Xforce = 0;
+        F.Yforce = 0;
+        return F;
+    } else if (!node->NE) {
+        if (node -> numberOfParticles == 0) {
+            F.Xforce = 0;
+            F.Yforce = 0;
+            return F;
+        } else {
+            int j = node->id;
+            rx = x[i] - x[j];
+            ry = y[i] - y[j];
+            r = sqrt(rx*rx + ry*ry);
+            rr = r + e0;
+            F.Xforce = -G*mass[i]*mass[j]*rx/(rr*rr*rr);
+            F.Yforce = -G*mass[i]*mass[j]*ry/(rr*rr*rr);
+            return F;
+        }
+    }
+    else {
+        double W = node->rightBorder - node->leftBorder;
+        double D = sqrt((node->centerX - x[i])*(node->centerX - x[i]) +
+                        (node->centerY - y[i])*(node->centerY - y[i]));
+        double T = W/D;
+        
+        if (T < theta_max) {
+            rx = x[i] - node->centerX;
+            ry = y[i] - node->centerY;
+            r = sqrt(rx*rx + ry*ry);
+            rr = r + e0;
+            F.Xforce = -G*mass[i]*node->nodeMass*rx/(rr*rr*rr);
+            F.Yforce = -G*mass[i]*node->nodeMass*ry/(rr*rr*rr);
+            return F;
+        } else {
+            struct force FNW = forceOnParticle(i, node->NW);
+            struct force FSW = forceOnParticle(i, node->SW);
+            struct force FNE = forceOnParticle(i, node->NE);
+            struct force FSE = forceOnParticle(i, node->SE);
+            
+            F.Xforce = FNW.Xforce + FSW.Xforce + FNE.Xforce + FSE.Xforce;
+            F.Yforce = FNW.Yforce + FSW.Yforce + FNE.Yforce + FSE.Yforce;
+            return F;
+        }
+    }
+}
 
 
 
