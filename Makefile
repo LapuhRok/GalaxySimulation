@@ -14,7 +14,7 @@ STFLAGS=-std=c99
 CFLAGS=-Wno-deprecated-declarations
 
 # Set the optimisation and debug flags
-OPTFLAGS=-O0
+OPTFLAGS=-O2
 DEBUGFLAGS=
 
 
@@ -27,7 +27,10 @@ galsim.o: galsim.c
 	gcc $(STFLAGS) $(DEBUGFLAGS) $(OPTFLAGS) -c galsim.c $(CFLAGS)
 	
 graphics.o: graphics.c
-	gcc $(STFLAGS) $(DEBUGFLAGS) $(OPTFLAGS) -c graphics.c $(CFLAGS)	
+	gcc $(STFLAGS) $(DEBUGFLAGS) $(OPTFLAGS) -c graphics.c $(CFLAGS)
+
+compare: compare.c
+	gcc $(STFLAGS) $(DEBUGFLAGS) $(OPTFLAGS) -o compare compare.c
 	
 clean:
-	rm -f ./galsim *.o
+	rm -f ./galsim *.o ./compare
