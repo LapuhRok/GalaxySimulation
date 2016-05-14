@@ -29,8 +29,6 @@ galsim.o: galsim.c
 graphics.o: graphics.c
 	gcc $(STFLAGS) $(DEBUGFLAGS) $(OPTFLAGS) -c graphics.c $(CFLAGS)
 
-compare: compare.c
-	gcc $(STFLAGS) $(DEBUGFLAGS) $(OPTFLAGS) -o compare compare.c
 	
 clean:
-	rm -f ./galsim *.o ./compare
+	rm -f ./galsim *.o

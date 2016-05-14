@@ -18,10 +18,10 @@ int main(int argc, char *argv[]) {
     // Allocate memory for variables
     double *p1 = (double *)malloc(5*N*sizeof(double));
     double *p2 = (double *)malloc(5*N*sizeof(double));
-    double *x1 = (double *)malloc(5*sizeof(double));
-    double *x2 = (double *)malloc(5*sizeof(double));
-    double *y1 = (double *)malloc(5*sizeof(double));
-    double *y2 = (double *)malloc(5*sizeof(double));
+    double *x1 = (double *)malloc(N*sizeof(double));
+    double *x2 = (double *)malloc(N*sizeof(double));
+    double *y1 = (double *)malloc(N*sizeof(double));
+    double *y2 = (double *)malloc(N*sizeof(double));
     
     // Read input file
     int flag = read_doubles_from_file(5*N, p1, argv[2]);
