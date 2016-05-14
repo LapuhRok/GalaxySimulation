@@ -23,7 +23,7 @@ struct force {
 
 // Declarations of functions
 void Bounce(double *x, double *y, double *u, double *v);
-void updateForce();
+void updateForceBarnesHut();
 struct force forceOnParticle(int i, treeNode* node);
 
 // Constant parameters
@@ -63,7 +63,7 @@ void display(void)
     startCodeTime = get_wall_seconds();
     
     // Update force
-    updateForce();
+    updateForceBarnesHut();
     
     // Update positions
     double ax, ay;
@@ -201,7 +201,7 @@ void Bounce(double *x, double *y, double *u, double *v)
     }
 }
 
-void updateForce()
+void updateForceBarnesHut()
 {
     if (rootNode)free_tree(rootNode);
     rootNode = (treeNode*)malloc(sizeof(treeNode));
