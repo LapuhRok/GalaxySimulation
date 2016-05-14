@@ -16,7 +16,7 @@
 
 // Declarations of functions
 void Bounce(double *x, double *y, double *u, double *v);
-void updateForce();
+void updateForceBasic();
 
 // Constant parameters
 int N;
@@ -53,7 +53,7 @@ void display(void)
     startCodeTime = get_wall_seconds();
     
     // Update force
-    updateForce();
+    updateForceBasic();
     
     // Update positions
     double ax, ay;
@@ -181,7 +181,7 @@ void Bounce(double *x, double *y, double *u, double *v)
     }
 }
 
-void updateForce()
+void updateForceBasic()
 {
     double sumX;
     double sumY;
