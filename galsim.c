@@ -161,17 +161,6 @@ int main(int argc, char *argv[]) {
         v[i] = p[5*i + 4];
     }
     
-//    for (int i = 0; i<N; i++) {
-//        printf("i=%d x=%f y=%f\n",i,x[i],y[i]);
-//    }
-//    
-//    rootNode = (treeNode*)malloc(sizeof(treeNode));
-//    createTree();                                       // ERROR IN THIS LINE-----------
-//    getCenterOfMass(rootNode);
-//    print_tree(rootNode, 0);
-//    updateForce();
-//    free_tree(rootNode);
-    
     // Run
     glutMainLoop();
     
