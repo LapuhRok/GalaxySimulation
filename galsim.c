@@ -130,7 +130,7 @@ int main(int argc, char *argv[]) {
     
     
     // Calculate gravitational constant
-    G = 100/N;
+    G = 100.0/N;
     
     // Initialize the graphics routines
     graphicsInit(&argc, argv, display);
