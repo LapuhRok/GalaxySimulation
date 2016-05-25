@@ -238,7 +238,7 @@ struct force forceOnParticle(const int i, treeNode* node)
 {
     struct force F;
     double rx, ry, r, rr;
-    if (!node->NE) {
+    if (node->isLeaf) {
         if (node -> numberOfParticles == 0 || node -> id == i) {
             F.Xforce = 0;
             F.Yforce = 0;

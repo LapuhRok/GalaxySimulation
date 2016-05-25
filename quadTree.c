@@ -44,6 +44,7 @@ void createTree(const int N)
     rootNode -> SW = NULL;
     rootNode -> SE = NULL;
     rootNode -> id = -1;
+    rootNode -> isLeaf = 0;
     
     for (int i = 0; i < N; i++) {
         insertInTree(i, rootNode);
@@ -63,6 +64,7 @@ void insertInTree(int i, treeNode* node)
     // create children if they do not exist
     if (!node -> SW) {
         node -> id = -1; // set id of nodes without children to -1
+        node -> isLeaf = 0;
         double midX = (node->leftBorder + node->rightBorder)/2;
         double midY = (node->downBorder + node->upBorder)/2;
         // NW
@@ -77,6 +79,7 @@ void insertInTree(int i, treeNode* node)
         node -> NW -> SW = NULL;
         node -> NW -> SE = NULL;
         node -> NW -> id = -1;
+        node -> NW -> isLeaf = 1;
         // SW
         node -> SW = (treeNode*)malloc(sizeof(treeNode));
         node -> SW -> numberOfParticles = 0;
@@ -89,6 +92,7 @@ void insertInTree(int i, treeNode* node)
         node -> SW -> SW = NULL;
         node -> SW -> SE = NULL;
         node -> SW -> id = -1;
+        node -> SW -> isLeaf = 1;
         // NE
         node -> NE = (treeNode*)malloc(sizeof(treeNode));
         node -> NE -> numberOfParticles = 0;
@@ -101,6 +105,7 @@ void insertInTree(int i, treeNode* node)
         node -> NE -> SW = NULL;
         node -> NE -> SE = NULL;
         node -> NE -> id = -1;
+        node -> NE -> isLeaf = 1;
         // SE
         node -> SE = (treeNode*)malloc(sizeof(treeNode));
         node -> SE-> numberOfParticles = 0;
@@ -113,6 +118,7 @@ void insertInTree(int i, treeNode* node)
         node -> SE -> SW = NULL;
         node -> SE -> SE = NULL;
         node -> SE -> id = -1;
+        node -> SE -> isLeaf = 1;
     }
     
     // Particle on the WEST
@@ -175,10 +181,11 @@ void insertInTree(int i, treeNode* node)
 }
 
 void free_tree(treeNode* node) {
-    if(node->NW) free_tree(node->NW);
-    if(node->NE) free_tree(node->NE);
-    if(node->SW) free_tree(node->SW);
-    if(node->SE) free_tree(node->SE);
+    if(!node->isLeaf) {free_tree(node->NW);
+        free_tree(node->NE);
+        free_tree(node->SW);
+        free_tree(node->SE);
+    }
     free(node);
 }
 

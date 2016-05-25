@@ -14,6 +14,7 @@ struct treeNode_ {
     double centerY;
     double nodeMass;
     int numberOfParticles;
+    int isLeaf;
     double leftBorder;
     double rightBorder;
     double upBorder;
