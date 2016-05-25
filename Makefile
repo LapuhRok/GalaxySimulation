@@ -14,7 +14,7 @@ STFLAGS=-std=c99
 CFLAGS=-Wno-deprecated-declarations
 
 # Set the optimisation and debug flags
-OPTFLAGS=-O2
+OPTFLAGS=-Ofast -march=native
 DEBUGFLAGS=
 
 

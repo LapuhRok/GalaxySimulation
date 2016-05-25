@@ -32,7 +32,7 @@
 //    return 0;
 //}
 
-void createTree()
+void createTree(const int N)
 {
     rootNode -> numberOfParticles = 0;
     rootNode -> downBorder = 0.0;

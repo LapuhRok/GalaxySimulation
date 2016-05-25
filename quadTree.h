@@ -29,13 +29,13 @@ typedef struct treeNode_ treeNode;
 
 
 // Declarations
-void createTree();
+void createTree(const int N);
 void insertInTree(int i, treeNode* node);
 void free_tree(treeNode* node);
 void print_tree(treeNode* node, int level);
 void getCenterOfMass(treeNode* node);
 double *x,*y,*mass,*forceX,*forceY,*u,*v;
-int N;
+//int N;
 treeNode* rootNode;
 
 

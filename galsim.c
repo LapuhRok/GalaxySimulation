@@ -28,12 +28,12 @@ void updateForceBarnesHut();
 struct force forceOnParticle(int i, treeNode* node);
 
 // Constant parameters
-int N;
-int nsteps;
-double delta_t;
-double theta_max;
+const int N;
+const int nsteps;
+const double delta_t;
+const double theta_max;
+const double e0 = 1e-3;
 double G;
-double e0 = 1e-3;
 
 // Iterations counter
 int iter = 0;
@@ -65,6 +65,7 @@ void display(void)
     
     // Update force
     updateForceBarnesHut();
+    //updateForceBasic();
     
     // Update positions
     double ax, ay;
@@ -223,7 +224,7 @@ void updateForceBarnesHut()
 {
     if (rootNode)free_tree(rootNode);
     rootNode = (treeNode*)malloc(sizeof(treeNode));
-    createTree();
+    createTree(N);
     getCenterOfMass(rootNode);
     
     for(int i = 0; i < N; i++) {
@@ -233,16 +234,12 @@ void updateForceBarnesHut()
     }
 }
 
-struct force forceOnParticle(int i, treeNode* node)
+struct force forceOnParticle(const int i, treeNode* node)
 {
     struct force F;
     double rx, ry, r, rr;
-    if (node -> id == i) {
-        F.Xforce = 0;
-        F.Yforce = 0;
-        return F;
-    } else if (!node->NE) {
-        if (node -> numberOfParticles == 0) {
+    if (!node->NE) {
+        if (node -> numberOfParticles == 0 || node -> id == i) {
             F.Xforce = 0;
             F.Yforce = 0;
             return F;
